@@ -23,5 +23,5 @@
 4. Evaluation
 
 ## References
-- Course Lab 6: PyTorch Doodle Classifier
+- [Course Lab 6: PyTorch Doodle Classifier](https://colab.research.google.com/drive/1V1GsAgSpJ0y6FtE2x-mTpgLy3QASZuKE#scrollTo=RlAl_f_86Dsh)
 - [PyTorch Official Tutorial](https://docs.pytorch.org)
