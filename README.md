@@ -14,7 +14,7 @@
 - ResNet Transfer Learning (coming soon)
 
 ## Results
-- Baseline CNN Accuracy: ~94%
+- Baseline CNN Accuracy: ~93%
 
 ## Pipeline
 1. Data Loading & Preprocessing
