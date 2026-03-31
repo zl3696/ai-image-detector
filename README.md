@@ -1,7 +1,7 @@
 # Truth in the Noise: Spotting AI Images in a Synthetic World
 
 ## Overview
-
+With our interest in photojournalism and AI security, we aimed to address the real world concern about AI entering the field of journalism. This project uses machine learning approaches to detect AI-generated images at pixel level, trained on the CIFAKE dataset of 120,000 real and AI-generated images. The end goal is to write a technical blog post and develop a Chrome browser extension that automatically flags suspicious images on web.
 
 ## Dataset
 [CIFAKE: Real and AI-Generated Synthetic Images](https://www.kaggle.com/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images)
