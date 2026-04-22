@@ -10,18 +10,31 @@ With our interest in photojournalism and AI security, we aimed to address the re
 - Total: 120,000 labeled images
 
 ## Models
-- Baseline CNN (from scratch)
-- ResNet Transfer Learning (coming soon)
+- Baseline CNN (trained from scratch)
+- ResNet-18 (transfer learning, ImageNet pretrained)
 
 ## Results
-- Baseline CNN Accuracy: ~93%
 
-## Pipeline
-1. Data Loading & Preprocessing
-2. Custom PyTorch Dataset & DataLoader
-3. CNN Model Training
-4. Evaluation
+| Model | Accuracy | FAKE Recall | REAL Recall |
+|---|---|---|---|
+| Baseline CNN | 93.67% | 0.9242 | 0.9492 |
+| ResNet-18 Transfer | 88.58% | 0.9123 | 0.8592 |
+
+The Baseline CNN outperforms ResNet-18 transfer learning on this task. See `docs/blog.md` for full analysis.
+
+## Repo Structure
+- `src/` — model, dataset, training, and evaluation code
+- `pipeline.ipynb` — full reproducible experiment notebook
+- `assets/` — figures from training and evaluation
+- `docs/` — project blog and writeup
+- `data/` — dataset information
+
+## How to Reproduce
+1. Open `pipeline.ipynb` in Google Colab
+2. Enable GPU: `Runtime → Change runtime type → T4 GPU`
+3. Run all cells in order
 
 ## References
+- [CIFAKE Dataset](https://www.kaggle.com/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images)
 - [Course Lab 6: PyTorch Doodle Classifier](https://colab.research.google.com/drive/1V1GsAgSpJ0y6FtE2x-mTpgLy3QASZuKE#scrollTo=RlAl_f_86Dsh)
 - [PyTorch Official Tutorial](https://docs.pytorch.org)
