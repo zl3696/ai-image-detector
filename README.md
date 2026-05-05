@@ -34,6 +34,20 @@ The Baseline CNN outperforms ResNet-18 transfer learning on this task. See `docs
 2. Enable GPU: `Runtime → Change runtime type → T4 GPU`
 3. Run all cells in order
 
+## Try the Extension:
+Try the extension:
+1. Find the ai-detector-extension
+2. Click the green Code button → Download ZIP
+3. Unzip, then open chrome://extensions
+4. Enable Developer mode → Load unpacked → select the ai-detector-extension folder
+5. Pint it from the extensions menu
+
+Using the Extension:
+1. Click the extension icon --> the side panel willopen
+2. Click "Scan Page"
+3. The results will appear live as each of the images finishes, with a confidence bar
+
+
 ## References
 - [CIFAKE Dataset](https://www.kaggle.com/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images)
 - [Course Lab 6: PyTorch Doodle Classifier](https://colab.research.google.com/drive/1V1GsAgSpJ0y6FtE2x-mTpgLy3QASZuKE#scrollTo=RlAl_f_86Dsh)
