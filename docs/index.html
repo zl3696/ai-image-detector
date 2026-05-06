@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Truth in the Noise — AI Image Detector</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =============================================
+       VARIABLES — change colors here to retheme
+    ============================================= */
+    :root {
+      --bg:        #f8f5f0;
+      --white:     #ffffff;
+      --border:    #e0d8cc;
+      --text:      #1e1b18;
+      --muted:     #6b6255;
+      --red:       #bf3726;
+      --red-light: #fdf2f0;
+      --amber:     #9a5f0a;
+      --blue:      #1a3a5c;
+      --nav-height: 52px;
+    }
+
+    /* =============================================
+       RESET & BASE
+    ============================================= */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background-color: var(--bg);
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    /* =============================================
+       NAVIGATION BAR
+    ============================================= */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--nav-height);
+      background-color: rgba(248, 245, 240, 0.96);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+    }
+
+    .nav-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 0;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 0 1.2rem;
+      height: var(--nav-height);
+      line-height: var(--nav-height);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--muted);
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .nav-links a:hover   { color: var(--text); }
+    .nav-links a.active  { color: var(--text); border-bottom-color: var(--red); }
+
+    /* =============================================
+       TAB SWITCHING — JS toggles .active class
+    ============================================= */
+    .tab-panel          { display: none; }
+    .tab-panel.active   { display: block; }
+
+    /* =============================================
+       HERO SECTION
+    ============================================= */
+    .hero {
+      position: relative;
+      min-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid var(--border);
+      background-color: #faf7f2;
+      overflow: hidden;
+    }
+
+    /* Faint decorative horizontal lines */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 47px,
+        rgba(160, 150, 135, 0.15) 47px,
+        rgba(160, 150, 135, 0.15) 48px
+      );
+      pointer-events: none;
+    }
+
+    /* Large faded background word */
+    .hero-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(8rem, 20vw, 18rem);
+      font-weight: 900;
+      color: rgba(191, 55, 38, 0.05);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      width: 100%;
+      animation: fade-up 0.9s ease both;
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    /* The short red line before the label */
+    .hero-label::before {
+      content: '';
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background-color: var(--red);
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--red);
+    }
+
+    .hero-desc {
+      font-size: 1.15rem;
+      font-style: italic;
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+    }
+
+    /* The row of stats at the bottom of the hero */
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .stat-value.highlight { color: var(--red); }
+
+    /* =============================================
+       MAIN ARTICLE CONTENT
+    ============================================= */
+    .article {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 4.5rem 2rem 7rem;
+    }
+
+    /* Section heading with number badge */
+    .section-heading {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin: 5rem 0 1.8rem;
+    }
+
+    .section-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      font-weight: 600;
+      color: var(--red);
+      opacity: 0.5;
+      padding-top: 0.6rem;
+      flex-shrink: 0;
+      width: 28px;
+    }
+
+    .article h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      line-height: 1.2;
+      border-bottom: 2px solid var(--red);
+      padding-bottom: 0.6rem;
+      flex: 1;
+    }
+
+    .article h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin: 2.5rem 0 0.8rem;
+    }
+
+    .article p {
+      margin-bottom: 1.4rem;
+      color: #2e2b26;
+      font-weight: 300;
+    }
+
+    .article p strong { color: var(--text); font-weight: 600; }
+    .article p em     { font-style: italic; color: var(--red); }
+
+    /* Big decorative first letter */
+    .drop-cap::first-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 900;
+      line-height: 0.8;
+      float: left;
+      margin: 0.12em 0.1em 0 0;
+      color: var(--red);
+    }
+
+    /* Highlighted quote block */
+    .pull-quote {
+      margin: 2.5rem 0;
+      padding: 1.6rem 1.8rem 1.6rem 2rem;
+      border-left: 4px solid var(--red);
+      background-color: var(--red-light);
+    }
+
+    .pull-quote p {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-style: italic;
+      line-height: 1.55;
+      color: var(--text);
+      margin: 0;
+    }
+
+    /* Yellow-ish info/warning box */
+    .callout {
+      margin: 2rem 0;
+      padding: 1.1rem 1.4rem;
+      background-color: #fef9f0;
+      border: 1px solid #e8cfa0;
+      border-left: 4px solid var(--amber);
+    }
+
+    .callout p { color: #7a4e0a; font-size: 0.95rem; margin: 0; }
+    .callout p strong { color: var(--amber); }
+
+    /* Thin horizontal divider between sections */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 3.5rem 0;
+      color: var(--muted);
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background-color: var(--border);
+    }
+
+    .divider span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    /* =============================================
+       IMAGES — HOW TO USE:
+       1. Upload your image to docs/assets/images/
+       2. Replace the src below with your filename
+          e.g. src="assets/images/confusion_matrix.png"
+       3. Update the alt text and caption
+    ============================================= */
+    .figure {
+      margin: 2.5rem 0;
+      border: 1px solid var(--border);
+      background-color: var(--white);
+    }
+
+    .figure img {
+      width: 100%;
+      display: block;
+    }
+
+    .figure figcaption {
+      padding: 0.7rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      letter-spacing: 0.03em;
+    }
+
+    /* =============================================
+       STAT CARDS (the 4-up grid)
+    ============================================= */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background-color: var(--border);
+      border: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+
+    .stats-grid .card {
+      background-color: var(--white);
+      padding: 1.3rem 1rem;
+      text-align: center;
+    }
+
+    .stats-grid .card .number {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 900;
+      color: var(--red);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .stats-grid .card .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* =============================================
+       RESULTS TABLE
+    ============================================= */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      margin: 1.5rem 0;
+    }
+
+    thead tr { border-bottom: 2px solid var(--text); }
+
+    th {
+      padding: 0.5rem 0.8rem;
+      text-align: left;
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr.winner td { color: var(--red); font-weight: 600; }
+
+    /* =============================================
+       ARCHITECTURE DIAGRAM
+    ============================================= */
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      gap: 0;
+      margin: 2rem 0;
+      padding-bottom: 0.5rem;
+    }
+
+    .arch-box {
+      background-color: #f0ece4;
+      border: 1px solid var(--border);
+      padding: 0.75rem 0.7rem;
+      text-align: center;
+      flex-shrink: 0;
+      min-width: 80px;
+    }
+
+    .arch-box .box-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+      line-height: 1.4;
+    }
+
+    .arch-box .box-shape {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--red);
+    }
+
+    .arch-arrow {
+      color: var(--muted);
+      padding: 0 0.3rem;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    /* =============================================
+       SMALL PARAMETER TABLE
+    ============================================= */
+    .param-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      margin: 1.5rem 0;
+    }
+
+    .param-table tr { border-bottom: 1px solid var(--border); }
+    .param-table tr:last-child { border-bottom: none; }
+    .param-table td { padding: 0.55rem 0.8rem; vertical-align: top; }
+
+    .param-table td:first-child {
+      color: var(--muted);
+      font-size: 0.65rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      width: 130px;
+    }
+
+    .param-table td:nth-child(2) {
+      color: var(--amber);
+      font-weight: 600;
+      width: 90px;
+    }
+
+    .param-table td:nth-child(3) {
+      color: var(--muted);
+      font-family: 'Source Serif 4', serif;
+      font-style: italic;
+      font-size: 0.85rem;
+    }
+
+    /* =============================================
+       CONFUSION MATRIX
+    ============================================= */
+    .confusion-matrix {
+      display: grid;
+      grid-template-columns: 52px 1fr 1fr;
+      gap: 3px;
+      max-width: 360px;
+      margin: 1.5rem 0;
+    }
+
+    .cm-header {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.3rem;
+    }
+
+    .cm-cell {
+      padding: 1rem 0.6rem;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .cm-correct  { background-color: var(--blue); }
+    .cm-wrong    { background-color: #f5e0dd; }
+
+    .cm-cell .cm-count {
+      display: block;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .cm-correct .cm-count { color: white; }
+    .cm-wrong   .cm-count { color: var(--red); }
+
+    .cm-cell .cm-pct { font-size: 0.65rem; }
+    .cm-correct .cm-pct { color: rgba(255,255,255,0.65); }
+    .cm-wrong   .cm-pct { color: #a03020; }
+
+    /* =============================================
+       MODEL & EXTENSION PAGE LAYOUT
+    ============================================= */
+    .page {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 5rem 2rem 7rem;
+    }
+
+    .page h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.9rem, 4vw, 2.8rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .page .page-desc {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1.3rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background-color 0.15s;
+    }
+
+    .btn-red   { background-color: var(--red); color: white; border: 1px solid var(--red); }
+    .btn-red:hover { background-color: #a02e20; }
+
+    .btn-outline { background-color: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-outline:hover { border-color: var(--text); color: var(--text); }
+
+    .feature-list { list-style: none; border-top: 1px solid var(--border); }
+
+    .feature-list li {
+      display: flex;
+      gap: 1rem;
+      padding: 1.2rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: flex-start;
+    }
+
+    .feature-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+    .feature-list strong {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .feature-list p { font-size: 0.93rem; color: var(--muted); line-height: 1.5; margin: 0; }
+
+    /* Code/terminal block */
+    .code-block {
+      background-color: #1c1a17;
+      color: #d4cfc6;
+      border-left: 3px solid var(--red);
+      padding: 1.2rem 1.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      white-space: pre;
+    }
+
+    /* Small tag pills */
+    .tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.64rem;
+      background-color: #f0ece4;
+      border: 1px solid var(--border);
+      padding: 0.15rem 0.5rem;
+      color: var(--muted);
+      margin: 0.2rem 0.2rem 0.2rem 0;
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.64rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    /* =============================================
+       MOBILE ADJUSTMENTS
+    ============================================= */
+    @media (max-width: 600px) {
+      nav { padding: 0 1rem; }
+      .nav-title { display: none; }
+      .nav-links a { padding: 0 0.7rem; font-size: 0.6rem; }
+      .article, .page, .hero-content { padding-left: 1rem; padding-right: 1rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .pull-quote { margin: 2rem 0; }
+      footer { flex-direction: column; gap: 0.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- =============================================
+     NAVIGATION
+============================================= -->
+<nav>
+  <a class="nav-title" href="#">Truth in the Noise</a>
+  <ul class="nav-links">
+    <li><a href="#" class="tab-link active" data-tab="blog">Blog Post</a></li>
+    <li><a href="#" class="tab-link" data-tab="model">Model</a></li>
+    <li><a href="#" class="tab-link" data-tab="extension">Extension</a></li>
+  </ul>
+</nav>
+
+
+<!-- =============================================
+     TAB 1: BLOG POST
+============================================= -->
+<div id="tab-blog" class="tab-panel active">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-watermark">NOISE</div>
+    <div class="hero-content">
+      <p class="hero-label">Applied Machine Learning · 2026</p>
+      <h1>Truth in<br>the <em>Noise</em></h1>
+      <p class="hero-desc">Spotting AI-generated images in a synthetic world — a CNN trained to see what human eyes can no longer perceive.</p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-label">CNN Accuracy</span>
+          <span class="stat-value highlight">93.67%</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Dataset</span>
+          <span class="stat-value">CIFAKE · 120,000 images</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Stack</span>
+          <span class="stat-value">PyTorch · Chrome MV3</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Baseline</span>
+          <span class="stat-value">ResNet-18 · 88.58%</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ARTICLE BODY -->
+  <article class="article">
+
+    <!-- ── 00 ABSTRACT ── -->
+    <div class="section-heading">
+      <span class="section-num">00</span>
+      <h2>Abstract</h2>
+    </div>
+
+    <p class="drop-cap">In this project, we attempted to create a new tool to detect whether images on webpages across the Internet have been modified by artificial intelligence or feature any sort of artificial augmentation. To test this, we trained a custom CNN on the CIFAKE benchmark dataset of 120,000 real and AI-generated images. Through training, we achieved <strong>93.67% classification accuracy</strong>, outperforming a ResNet-18 transfer learning baseline. Our tool demonstrates that task-specific and low-resolution training produces more reliable detection than general pretrained models for this domain.</p>
+
+    <!-- 4-stat grid -->
+    <div class="stats-grid">
+      <div class="card"><span class="number">93.67%</span><span class="label">CNN Accuracy</span></div>
+      <div class="card"><span class="number">88.58%</span><span class="label">ResNet-18 Accuracy</span></div>
+      <div class="card"><span class="number">120K</span><span class="label">Training Images</span></div>
+      <div class="card"><span class="number">32×32</span><span class="label">Input Resolution</span></div>
+    </div>
+
+    <div class="divider"><span>§</span></div>
+
+    <!-- ── 01 INTRODUCTION ── -->
+    <div class="section-heading">
+      <span class="section-num">01</span>
+      <h2>Introduction</h2>
+    </div>
+
+    <p class="drop-cap">On January 3rd, 2026, President Nicolás Maduro of Venezuela was captured and arrested by a United States military strike launched by United States President Donald Trump. On January 5th, 2026, the New York Times published an article exposing the use of artificial intelligence tools in the photos that spread rapidly across social media following Maduro's capture.</p>
+
+    <p>On January 22nd, 2026, civil rights attorney and activist Nekima Levy Armstrong was arrested in Minnesota after an ICE protest. That morning, Kristi Noem, the former U.S. Secretary of Homeland Security, posted a photo from her arrest on X and, 30 minutes later, the White House posted the same photo on X. Only this time, Levy Armstrong was shown in distress and actively sobbing towards the camera. With further investigation, the corruption of the photos was clear.</p>
+
+    <div class="pull-quote">
+      <p>Since the start of President Trump's second term, AI-generated images have been a hallmark of the administration's political messaging and their overall communication strategy.</p>
+    </div>
+
+    <p>While some images are clearly satirical and identifiable as AI-generated, the concerning use of deepfake technology and artificial intelligence tools to alter photos has seeped into the newstream that the government is meant to provide for its citizens. What starts with a clearly generated photo of the president imaged as the Pope or as Jesus will end with much more catastrophic uses of the same technology.</p>
+
+    <p>With around <strong>53% of U.S. adults getting their news from social media</strong>, a number that has remained relatively stable since the Covid-19 pandemic, these uses of artificial intelligence have become more and more concerning, as models grow better and better and harder to perceive. Without proper guardrails, there will be little protection for the average citizen, who perceptibly will not be able to check every piece of media that they casually consume.</p>
+
+    <p>No one likes to be tricked, and no one wants to admit that an AI-generated photo has effectively duped them. However, in a study conducted on the Interpretation of AI-Generated vs. Human-Made Images, researchers Velasquez-Salamanca, Martin-Pascual, and Andreu-Sanchez found that when participants worked with a small batch of human-made and AI-generated images, they struggled to accurately identify the source. Further extrapolating this result, it becomes clear that we cannot solely rely on pure human judgment. As AI tools grow more advanced, what started as being able to detect when an image generating tool has accidentally given a subject 6 fingers will end with individuals either having to constantly look into the minutia of a photo's qualities — shadows, slightly off-color pixels — or, worse, being unable to perceive the source of an image at all.</p>
+
+    <p>Photos carry a heavy weight in shaping our understanding of realities, near and far from our own. From the level of individual usage to usage on the scale of some of the largest governments in the world, AI has entered the practice of shaping our reality. The question then becomes: what guardrails are there for us?</p>
+
+    <p>With the rapid growth and development of artificial intelligence tools, there are thousands of different ways that a photo can be altered, modified, or fully generated through AI — including fully generated photos, face alterations, and photo-edited or inpainted media. In response, the field of digital and image forensics has become increasingly important. Prior research has categorized this issue as both ontological (its ability to change our understanding of the nature of being) and epistemological (the reliability of the knowledge we hold) [Bird].</p>
+
+    <div class="pull-quote">
+      <p>The signal for distinguishing real from AI-generated images has now fully become sub-perceptual and statistical. It can only be seen in background pixel distributions, spatial inconsistencies, and frequency artifacts that no truly human-readable rule can capture.</p>
+    </div>
+
+    <p>We use a CNN because it learns to read exactly these features without having to be explicitly told — features that rule-based systems cannot reliably capture.</p>
+
+    <div class="divider"><span>§</span></div>
+
+    <!-- ── 02 RELATED WORK ── -->
+    <div class="section-heading">
+      <span class="section-num">02</span>
+      <h2>Related Work</h2>
+    </div>
+
+    <p class="drop-cap">Prior work in the field of visual disinformation spans the gamut of technical and qualitative research. Wang et al. demonstrated that a single forensic detector trained on a singular type of CNN generator has the ability to generalize to detect fakes from different and unseen architectures. The researchers showed that detectors did not need to be tailored for every new AI generator — that there are clear <strong>"fingerprints"</strong> that CNNs leave behind post-image alteration. While this result showed generalization is possible, they were clear that their work would have to be understood in light of the technology of their time, signalling a clear "for now" qualifier.</p>
+
+    <p>More recently, <strong>Mahara et al. (May 2026)</strong> published a broad overview paper covering a variety of detection methods and their limitations. The review confirms the idea of fingerprints — consistent artifacts in frequency space and texture patterns — but emphasizes that they are fragile and model-dependent over time, because newer generative models are actively designed to remove and disguise them.</p>
+
+    <p>Mahara et al. establish that there are <strong>seven AIGI detection methodologies</strong>: spatial-domain analysis, frequency-domain analysis, fingerprint analysis, patch-based analysis, training-free methods, multimodal and reasoning-based models, and commercial detection frameworks.</p>
+
+    <p>Industry-scale detectors such as <strong>Hive Moderation, Illuminarty, and AI or Not</strong> operate on full-resolution images and claim 90–99% accuracy depending on the generator. These are, however, closed-source and not reproducible. The standard input resolution for modern detection research is 224×224 or higher. Our 32×32 is two orders of magnitude smaller in total pixel count — which has created a resolution gap.</p>
+
+    <p>The current landscape of AIGI tools has also included <strong>Explainable AI (XAI)</strong>, which aims to extract meaning from algorithms. By attempting to shine light on the black box of what an algorithm does, the extra layer of transparency allows individuals to become more vigilant and aware of when an image may or may not be AI-generated.</p>
+
+    <div class="divider"><span>§</span></div>
+
+    <!-- ── 03 DATASET ── -->
+    <div class="section-heading">
+      <span class="section-num">03</span>
+      <h2>Dataset</h2>
+    </div>
+
+    <p class="drop-cap">For our project, we used the benchmark dataset <strong>CIFAKE</strong>, which includes a collection of tens of thousands of real and AI photos. One of the most critical developments in the field of AI forensics has been the creation of the CIFAKE dataset in 2023 — the first proper benchmark for distinguishing between real-life and AI photos. Even in the three years since its publication, there have been major changes in how detection tools attempt to target these issues.</p>
+
+    <p>The dataset contains <strong>60,000 real camera-captured photographs</strong> and <strong>60,000 AI-generated images</strong>. A 32×32 RGB image has 3,072 input features per image (calculated from 32×32×3). With 120,000 images total, that is <strong>368,640,000 total input dimensions</strong>. The output is scalar in [0,1], thresholded at 0.5.</p>
+
+    <p>Before training, all images are resized, normalized, and converted into tensors. We carefully balanced the REAL and FAKE classes during sampling to prevent the model from developing a bias toward whichever class is more represented. Each image has a tensor shape of [3, 32, 32]. After the first convolutional layer and pooling → [32, 15, 15]. After the second → [64, 6, 6]. After the third → [128, 2, 2], with 512 values fed into the classification head.</p>
+
+    <div class="divider"><span>§</span></div>
+
+    <!-- ── 04 CURRENT TOOLS ── -->
+    <div class="section-heading">
+      <span class="section-num">04</span>
+      <h2>Current Tools</h2>
+    </div>
+
+    <p class="drop-cap">To understand the gap that our project fills, the landscape of current AIGI detection technology must be understood.</p>
+
+    <h3>Google SynthID</h3>
+    <p>Google's SynthID tool embeds digital watermarks directly into AI-generated images, audio, text, or video across all of Google's generative AI consumer products. The watermark lives in the pixels of the image — undetectable by the human eye but detectable by SynthID. The one flaw: extensive editing, blurring, cropping, or alteration can hide the watermark, making it unreliable as a content tag.</p>
+
+    <h3>Meta's AI Labels</h3>
+    <p>In February of 2024, Meta made the move to label AI-generated images on Facebook, Instagram, and Threads — a small "AI Info" disclaimer utilizing metadata and "industry standard indicators." While Meta has remained elusive about what those indicators are, these methods mainly look for watermarks in the metadata and some post-hoc detection methods that, as described by the Brookings Institute, "fight AI with AI," looking for subtle differences in the photo.</p>
+
+    <h3>Content Credentials (C2PA)</h3>
+    <p>The Coalition for Content Provenance and Authenticity has a set of technical standards for publishers, consumers, and creators to establish the origin and edits of content produced digitally. This technical standard is called <strong>Content Credentials</strong> and is kept in a JSON-based format. Functionally described as a "nutritional label" for digital content, it allows outside users to look at the cryptographically signed metadata of an image's full provenance chain.</p>
+
+    <div class="callout">
+      <p><strong>The critical gap:</strong> Both SynthID and Content Credentials require and rely on the generator of the image participating. Our model does not require anything from the generator — just the image itself. The detector proposed for this project is meant to work on any image, regardless of whether or not it was specifically watermarked or tagged.</p>
+    </div>
+
+    <div class="divider"><span>§</span></div>
+
+    <!-- ── 05 ML APPROACH ── -->
+    <div class="section-heading">
+      <span class="section-num">05</span>
+      <h2>Machine Learning Approach</h2>
+    </div>
+
+    <p class="drop-cap">The project uses a <strong>Convolutional Neural Network (CNN) built from scratch in PyTorch</strong>. CNNs can learn to detect visual patterns automatically, without being told explicitly what they should be looking for. The input is a single RGB image, resized to 32×32 pixels, represented as a tensor [3, 32, 32]. Values above 0.5 → FAKE; at or below 0.5 → REAL.</p>
+
+    <h3>Architecture — Three Stages</h3>
+
+    <div class="arch-flow">
+      <div class="arch-box"><div class="box-label">Input</div><div class="box-shape">[3,32,32]</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box"><div class="box-label">Conv 1<br>Edges</div><div class="box-shape">[32,15,15]</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box"><div class="box-label">Conv 2<br>Patterns</div><div class="box-shape">[64,6,6]</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box"><div class="box-label">Conv 3<br>Structure</div><div class="box-shape">[128,2,2]</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box"><div class="box-label">FC + Dropout</div><div class="box-shape">512 vals</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box"><div class="box-label">Sigmoid</div><div class="box-shape">P(FAKE)</div></div>
+    </div>
+
+    <p><strong>Stage 1 — Feature extraction:</strong> Three convolutional blocks progressively compress and abstract the image. Block 1 (32 filters) detects low-level features like edges and textures. Block 2 (64 filters) identifies mid-level patterns. Block 3 (128 filters) captures higher-order structural features. Each block is followed by ReLU activation and max pooling.</p>
+
+    <p><strong>Stage 2 — Classification head:</strong> The 128×2×2 feature map is flattened and passed through two fully connected layers. A dropout layer (rate 0.5) randomly deactivates half the neurons during training to prevent overfitting.</p>
+
+    <p><strong>Stage 3 — Output:</strong> A single sigmoid neuron outputs a probability in [0,1]. Training uses <strong>Binary Cross-Entropy (BCELoss)</strong>. A wrong prediction made with 99% confidence incurs a much larger penalty than one made with 51% confidence. The optimizer is <strong>Adam</strong> with a learning rate of 0.001, trained over 10 epochs.</p>
+
+    <h3>Hyperparameters</h3>
+    <table class="param-table">
+      <tr><td>Batch size</td><td>64</td><td>Lab 6 baseline</td></tr>
+      <tr><td>Learning rate</td><td>0.001</td><td>Lab 6 baseline</td></tr>
+      <tr><td>Dropout</td><td>0.5</td><td>Explore lower values (e.g. 0.3) in future work due to slight overfitting</td></tr>
+      <tr><td>Epochs</td><td>10</td><td>Modified from Lab 6 (15→10); validation plateaus after epoch 6</td></tr>
+      <tr><td>Filter sizes</td><td>32→64→128</td><td>Lab 6 baseline</td></tr>
+      <tr><td>Optimizer</td><td>Adam</td><td>Adaptive; well-suited for image classification</td></tr>
+      <tr><td>Loss</td><td>BCELoss</td><td>Binary cross-entropy for binary classification</td></tr>
+    </table>
+
+    <h3>ResNet-18 Baseline</h3>
+    <p>ResNet-18 was chosen as a comparison model because it is a well-known pretrained CNN commonly used as a baseline. It was initialized using weights pretrained on ImageNet — over one million real-world images. For transfer learning, all layers except the final layer were frozen. Since ResNet-18 expects 224×224 inputs, all images were resized and normalized using the ImageNet mean and standard deviation values.</p>
+
+    <div class="divider"><span>§</span></div>
+
+    <!-- ── 06 RESULTS ── -->
+    <div class="section-heading">
+      <span class="section-num">06</span>
+      <h2>Results</h2>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th></tr>
+      </thead>
+      <tbody>
+        <tr class="winner"><td>CNN (ours)</td><td>93.67%</td><td>0.9304</td><td>0.9285</td><td>0.9285</td></tr>
+        <tr><td>ResNet-18</td><td>88.58%</td><td>0.8868</td><td>0.8858</td><td>0.8857</td></tr>
+      </tbody>
+    </table>
+
+    <h3>CNN — Per-Class Results</h3>
+    <table class="param-table">
+      <tr><td>REAL</td><td>Prec: 0.9020</td><td>Recall: 0.9616 · F1: 0.9308 · Support: 10,000</td></tr>
+      <tr><td>FAKE</td><td>Prec: 0.9589</td><td>Recall: 0.8955 · F1: 0.9261 · Support: 10,000</td></tr>
+      <tr><td>Macro avg</td><td>0.9304</td><td>Recall: 0.9285 · F1: 0.9285 · Total: 20,000</td></tr>
+    </table>
+
+    <h3>ResNet-18 — Per-Class Results</h3>
+    <table class="param-table">
+      <tr><td>REAL</td><td>Prec: 0.9074</td><td>Recall: 0.8592 · F1: 0.8826 · Support: 10,000</td></tr>
+      <tr><td>FAKE</td><td>Prec: 0.8663</td><td>Recall: 0.9123 · F1: 0.8887 · Support: 10,000</td></tr>
+      <tr><td>Macro avg</td><td>0.8868</td><td>Recall: 0.8858 · F1: 0.8857 · Total: 20,000</td></tr>
+    </table>
+
+    <h3>Confusion Matrix — Baseline CNN</h3>
+    <p>Out of 10,000 images per class:</p>
+    <div class="confusion-matrix">
+      <div></div>
+      <div class="cm-header">Pred: REAL</div>
+      <div class="cm-header">Pred: FAKE</div>
+      <div class="cm-header" style="writing-mode:vertical-rl; transform:rotate(180deg); font-size:0.5rem;">Actual: REAL</div>
+      <div class="cm-cell cm-correct"><span class="cm-count">9,492</span><span class="cm-pct">94.9%</span></div>
+      <div class="cm-cell cm-wrong"><span class="cm-count">508</span><span class="cm-pct">5.1%</span></div>
+      <div class="cm-header" style="writing-mode:vertical-rl; transform:rotate(180deg); font-size:0.5rem;">Actual: FAKE</div>
+      <div class="cm-cell cm-wrong"><span class="cm-count">758</span><span class="cm-pct">7.6%</span></div>
+      <div class="cm-cell cm-correct"><span class="cm-count">9,242</span><span class="cm-pct">92.4%</span></div>
+    </div>
+
+    <h3>Confusion Matrix Analysis</h3>
+    <p>The baseline CNN performed better overall, correctly classifying 9,492 real images and 9,242 fake images out of 10,000 in each class. It produced <strong>508 false positives</strong> (real images incorrectly labeled as fake) and <strong>758 false negatives</strong> (fake images incorrectly labeled as real). In comparison, ResNet-18 misclassified <strong>1,408 real images as fake</strong> — suggesting it over-predicted the FAKE label, while the baseline CNN gave more balanced predictions.</p>
+
+    <!-- =============================================
+         IMAGE EXAMPLE — CONFUSION MATRIX FIGURE
+         To add your own image:
+         1. Upload it to docs/assets/images/
+         2. Change the src to match your filename
+    ============================================= -->
+    <figure class="figure">
+      <img src="assets/images/confusion_matrix.png" alt="Side-by-side confusion matrices for CNN and ResNet-18" />
+      <figcaption>Fig. 1 — Confusion matrices for both models. Left: ResNet-18. Right: Baseline CNN. The CNN shows more balanced predictions across both classes.</figcaption>
+    </figure>
+
+    <h3>Training Curve Analysis</h3>
+    <p>The baseline CNN showed smooth and consistent improvement over the 10 training epochs. Training loss steadily decreased from about 0.35 to below 0.10, while validation accuracy stabilized around <strong>93.8%</strong>. This suggests the model was learning effectively and generalizing well, without strong signs of overfitting.</p>
+
+    <p>In contrast, ResNet-18 showed less stable training behavior. Its validation loss increased sharply several times between epochs 4 and 8, and its validation accuracy fluctuated between about 83% and 91%. These unstable changes suggest that ResNet-18 had more difficulty converging to a stable solution.</p>
+
+    <!-- =============================================
+         IMAGE EXAMPLE — TRAINING CURVES
+    ============================================= -->
+    <figure class="figure">
+      <img src="assets/images/training_curves.png" alt="Training and validation curves for both models across 10 epochs" />
+      <figcaption>Fig. 2 — Training curves across 10 epochs. The CNN (bottom) converges smoothly. ResNet-18 (top) oscillates sharply between epochs 4 and 8.</figcaption>
+    </figure>
+
+    <h3>Why the CNN Outperformed ResNet-18</h3>
+    <p>The baseline CNN likely outperformed ResNet-18 because ResNet-18 was not well matched to this dataset. ResNet-18 was pretrained on ImageNet — high-resolution real-world images — while CIFAKE contains much smaller 32×32 images. Because most of ResNet-18's layers were frozen during training, the model could not fully adjust its learned features to this different image format.</p>
+
+    <div class="pull-quote">
+      <p>A simpler model trained specifically for the task outperformed a deeper pretrained model. Task-specific training matters — a model's prior knowledge can work against it when the domain shifts enough.</p>
+    </div>
+
+    <div class="divider"><span>§</span></div>
+
+    <!-- ── 07 LIMITATIONS ── -->
+    <div class="section-heading">
+      <span class="section-num">07</span>
+      <h2>Limitations</h2>
+    </div>
+
+    <p class="drop-cap">The most pressing limitation of this project is one that was built into it from the start: the images that CIFAKE provides are 32×32 pixels. Real photographs — the kind embedded in news articles, shared across social media platforms, used by governments to shape public perception — are orders of magnitude larger. The subtle signals that distinguish an AI-generated image from a real one — the inconsistent shadows, the slightly wrong textures, the pixels that don't quite belong — exist at a level of detail that 32×32 images cannot reliably capture. When the browser extension encounters an image in the wild, it processes something fundamentally different from what the model was trained on. The gap itself matters.</p>
+
+    <p>This gap shows up in the training curves as well. The Baseline CNN's validation accuracy plateaus around epoch 6, hovering between 93–94%, while training accuracy continues to climb. The model begins to memorize the training set rather than learning something more durable. The browser extension shows that CNN confidence scores cluster around <strong>50.1–50.3%</strong> on real images in the wild — the model's confidence scores do not reflect its actual accuracy.</p>
+
+    <p>The ResNet-18 results complicate the picture further. In theory, a model pretrained on millions of high-resolution images should bring an advantage to this kind of classification task. In practice, its validation loss and accuracy swing dramatically across all ten epochs, never quite stabilizing. The resolution mismatch between ImageNet's photographs and CIFAKE's 32×32 inputs appears to actively work against it.</p>
+
+    <div class="callout">
+      <p><strong>A broader limitation:</strong> AI-generated images are getting better faster than detection methods are keeping up. The synthetic images in CIFAKE reflect the capabilities of the tools that produced them at the time of the dataset's creation. The outputs of today's generation tools are substantially harder to detect. A model trained on yesterday's fakes may not catch tomorrow's.</p>
+    </div>
+
+    <div class="divider"><span>§</span></div>
+
+    <!-- ── 08 ETHICS ── -->
+    <div class="section-heading">
+      <span class="section-num">08</span>
+      <h2>Ethics</h2>
+    </div>
+
+    <p class="drop-cap">While this problem attempts to address the broader ethical problems with how artificial intelligence has been used to generate and alter images, there are ethical concerns we also had to address while creating this tool.</p>
+
+    <p>One issue lies within understanding what should happen when a tool misclassifies a real image as a fake one. In the case of a <strong>false positive</strong>, the repercussions may have deep and concerning impacts on those who have their created media marked as AI. On the other hand, in the case of a <strong>false negative</strong>, the worry is that loopholes will be found so that people know what to do to have their images fly under the radar. Both cases carry equally concerning repercussions that can only be mitigated by increasing a confidence score in both the pipeline of classification and categorization.</p>
+
+    <p>Furthermore, by publishing detection methods publicly, there is the worry that this will give adversarial actors a roadmap for what signals to hide. With every improvement we make in detection, there are more instructions for how to better generate images that evade it.</p>
+
+    <p>While this project was done in the incubator of a class setting, a government-deployed version of this tool could label authentic images of state violence as AI-generated or altered. The public no longer can maintain faith in their own sight in discerning AI images, and tools to detect this might not have the scope or reach to properly protect the public.</p>
+
+    <p>In our attempt to devise a more open, accessible way to categorize content, this still does not protect the populations most vulnerable to AI misinformation, such as elderly and young users. Additionally, those who are on mobile devices will not be able to use our extension. There is a built-in equity problem that is hard to address simply through building out this technology.</p>
+
+    <div class="divider"><span>§</span></div>
+
+    <!-- ── 09 CONCLUSIONS ── -->
+    <div class="section-heading">
+      <span class="section-num">09</span>
+      <h2>Conclusions</h2>
+    </div>
+
+    <p class="drop-cap">This project started with a straightforward question: if machine learning is part of what has made it harder to trust what we see online, can it also be part of what makes that trust recoverable? Based on what we found, the answer is <em>yes</em> — carefully, and with a clear understanding of how far that answer currently reaches.</p>
+
+    <p>We trained and evaluated two classifiers against CIFAKE's 120,000 real and AI-generated images. The Baseline CNN reached <strong>93.67% accuracy</strong> with stable, consistent training curves. Compared to CIFAKE's state-of-the-art of ~92.98% GradCAM explainability, our 93.67% marginally exceeds this. ResNet-18 achieved 88.58% and showed high volatility across epochs — a consequence of the mismatch between its pretraining data and the low-resolution images it was asked to adapt to.</p>
+
+    <p>We took the better-performing model and built it into a <strong>Chrome Manifest V3 browser extension</strong>. The extension scans images on a webpage automatically, sends them to the classifier, and returns a real-or-fake label alongside a confidence score, surfacing flagged images in a side panel with GradCAM heatmaps that show which regions of the image drove the model's decision.</p>
+
+    <p>Looking at the misclassified images, patterns emerge. False positives tend to draw the model's attention to high-contrast edges and motion blur. False negatives often show the model focusing on background regions rather than the subject, suggesting it is reading scene-level coherence rather than the fine-grained artifacting that actually marks AI generation. These are not just interesting observations — they are a roadmap for what to improve.</p>
+
+    <p>The clearest next step is retraining on higher-resolution data. A dataset built from real news photographs and images produced by current-generation AI tools, at something closer to the resolution users actually encounter, would close the most significant gap this project leaves open. Layering in metadata analysis — cross-referencing an image's embedded EXIF data against its visual content — could add a second line of detection that is harder to fool.</p>
+
+    <div class="pull-quote">
+      <p>Fifty-three percent of American adults get their news from social media. They are not going to stop and reverse image search every photograph they scroll past. A tool that meets people where they already are is not a convenience. Given what is at stake, it is the whole point.</p>
+    </div>
+
+    <p>The benchmark paper in machine learning states that attention is all you need. In a world with AI-generated images, <em>human attention is no longer enough.</em></p>
+
+  </article>
+</div>
+
+
+<!-- =============================================
+     TAB 2: MODEL
+============================================= -->
+<div id="tab-model" class="tab-panel">
+  <div class="page">
+    <p class="hero-label" style="margin-bottom:1rem;">Hugging Face</p>
+    <h1>The Detection Model</h1>
+    <p class="page-desc">The trained CNN is hosted on Hugging Face. Explore the model card, download weights, or run inference via the Inference API.</p>
+
+    <div class="button-row">
+      <a class="btn btn-red" href="YOUR_HUGGINGFACE_LINK_HERE" target="_blank">🤗 View on Hugging Face</a>
+      <a class="btn btn-outline" href="https://github.com/zl3696/ai-image-detector/blob/main/pipeline.ipynb" target="_blank">View Training Notebook</a>
+    </div>
+
+    <ul class="feature-list">
+      <li>
+        <span class="feature-icon">🧠</span>
+        <div><strong>Architecture</strong><p>Custom 3-layer CNN in PyTorch. Three convolutional blocks (32→64→128 filters), two fully connected layers, sigmoid output. Trained from scratch on CIFAKE.</p></div>
+      </li>
+      <li>
+        <span class="feature-icon">📊</span>
+        <div><strong>Training Data</strong><p>CIFAKE dataset — 60,000 real photographs and 60,000 AI-generated images at 32×32 pixels. 120,000 total.</p></div>
+      </li>
+      <li>
+        <span class="feature-icon">🎯</span>
+        <div><strong>Performance</strong><p>93.67% accuracy, 0.9285 F1 score on 20,000 held-out test images. Outperforms ResNet-18 transfer learning baseline (88.58%).</p></div>
+      </li>
+      <li>
+        <span class="feature-icon">⚙️</span>
+        <div><strong>Input / Output</strong><p>Input: 32×32 RGB image tensor [3, 32, 32]. Output: scalar in [0, 1]. Above 0.5 = FAKE, at or below 0.5 = REAL.</p></div>
+      </li>
+    </ul>
+
+    <h3 style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#9a5f0a;margin-top:3rem;margin-bottom:0.8rem;">Quick Start</h3>
+    <div class="code-block">from transformers import pipeline
+
+detector = pipeline("image-classification",
+                    model="YOUR_HF_USERNAME/ai-image-detector")
+
+result = detector("path/to/image.jpg")
+print(result)
+# [{'label': 'FAKE', 'score': 0.94}]</div>
+  </div>
+</div>
+
+
+<!-- =============================================
+     TAB 3: EXTENSION
+============================================= -->
+<div id="tab-extension" class="tab-panel">
+  <div class="page">
+    <p class="hero-label" style="margin-bottom:1rem;">Chrome Extension</p>
+    <h1>AI Image Detector<br>Browser Extension</h1>
+    <p class="page-desc">A Chrome Manifest V3 extension that automatically scans images on any webpage and flags suspected AI-generated content — no manual searching required.</p>
+
+    <div class="button-row">
+      <a class="btn btn-red" href="https://github.com/zl3696/ai-image-detector/raw/main/ai-detector-extension%20(1).zip" target="_blank">⬇ Download Extension</a>
+      <a class="btn btn-outline" href="https://github.com/zl3696/ai-image-detector" target="_blank">View Source on GitHub</a>
+    </div>
+
+    <ul class="feature-list">
+      <li><span class="feature-icon">🔍</span><div><strong>Automatic Scanning</strong><p>When you visit any webpage, the extension detects all images larger than 80×80px and sends them to the classifier in the background.</p></div></li>
+      <li><span class="feature-icon">🏷️</span><div><strong>Real / Fake Labels</strong><p>Each image receives a REAL or FAKE label alongside a confidence score in a side panel.</p></div></li>
+      <li><span class="feature-icon">🗺️</span><div><strong>GradCAM Heatmaps</strong><p>Flagged images appear with GradCAM visualizations showing which regions drove the model's decision.</p></div></li>
+      <li><span class="feature-icon">🔒</span><div><strong>No Watermarks Required</strong><p>Unlike Google SynthID or Meta's AI labels, this tool works on any image from any source — no cooperation from the generator needed.</p></div></li>
+    </ul>
+
+    <h3 style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#9a5f0a;margin-top:3rem;margin-bottom:0.8rem;">Manual Installation</h3>
+    <div class="code-block">1. Download the extension zip above and unzip it
+
+2. Open Chrome and go to:
+   chrome://extensions/
+
+3. Enable "Developer mode" (toggle, top right)
+
+4. Click "Load unpacked" and select the
+   unzipped extension folder
+
+5. The icon appears in your toolbar — click it
+   on any page to open the side panel</div>
+
+    <div style="margin-top:1.5rem;">
+      <span class="tag">32×32 training resolution</span>
+      <span class="tag">Desktop Chrome only</span>
+      <span class="tag">Manifest V3</span>
+      <span class="tag">Research prototype</span>
+    </div>
+
+    <div class="callout" style="margin-top:1.5rem;">
+      <p><strong>⚠ Research prototype.</strong> The model was trained on 32×32 CIFAKE images but web images are much larger. Confidence scores tend to cluster near 50% on real-world images. Retraining on higher-resolution data is the primary next step.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- =============================================
+     FOOTER
+============================================= -->
+<footer>
+  <span>Truth in the Noise · Applied ML · 2026</span>
+  <a href="https://github.com/zl3696/ai-image-detector">GitHub ↗</a>
+</footer>
+
+
+<!-- =============================================
+     TAB SWITCHING JAVASCRIPT (very simple)
+============================================= -->
+<script>
+  // Find all tab buttons and all tab panels
+  const tabLinks  = document.querySelectorAll('.tab-link');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+
+  // When a tab button is clicked...
+  tabLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      // Get which tab to show (from data-tab attribute)
+      var tabName = link.getAttribute('data-tab');
+
+      // Remove .active from all buttons and panels
+      tabLinks.forEach(function(l)  { l.classList.remove('active'); });
+      tabPanels.forEach(function(p) { p.classList.remove('active'); });
+
+      // Add .active to the clicked button and matching panel
+      link.classList.add('active');
+      document.getElementById('tab-' + tabName).classList.add('active');
+
+      // Scroll back to the top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>
