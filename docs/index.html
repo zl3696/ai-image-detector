@@ -598,9 +598,62 @@
     footer a { color: #aaa; text-decoration: none; }
     footer a:hover { color: #666; }
 
-     </style>
+    /* TABLE OF CONTENTS
+    ======================================== */
+    .toc-wrapper {
+      position: fixed;
+      left: 1.5rem;
+      top: 80px;
+      width: 155px;
+      font-family: 'Source Code Pro', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.05em;
+    }
+    .toc-title {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #888;
+      margin-bottom: 0.6rem;
+    }
+    .toc-list {
+      list-style: none;
+      border-left: 2px solid #e0ddd8;
+      padding-left: 0.8rem;
+    }
+    .toc-list li { margin-bottom: 0.35rem; }
+    .toc-list a {
+      color: #999;
+      text-decoration: none;
+      transition: color 0.2s;
+      display: block;
+      line-height: 1.4;
+    }
+    .toc-list a:hover,
+    .toc-list a.active { color: #b03020; }
+    @media (max-width: 1200px) {
+      .toc-wrapper { display: none; }
+    }
+
+  </style>
 </head>
 <body>
+  <div class="toc-wrapper" id="toc">
+  <div class="toc-title">Contents</div>
+  <ul class="toc-list">
+    <li><a href="#abstract">00 Abstract</a></li>
+    <li><a href="#introduction">01 Introduction</a></li>
+    <li><a href="#related-work">02 Related Work</a></li>
+    <li><a href="#dataset">03 Dataset</a></li>
+    <li><a href="#current-tools">04 Current Tools</a></li>
+    <li><a href="#ml-approach">05 ML Approach</a></li>
+    <li><a href="#results">06 Results</a></li>
+    <li><a href="#limitations">07 Limitations</a></li>
+    <li><a href="#ethics">08 Ethics</a></li>
+    <li><a href="#conclusions">09 Conclusions</a></li>
+    <li><a href="#references">10 References</a></li>
+  </ul>
+</div>
 <!--  Navigation
 ======================================== -->
 <nav>
@@ -631,7 +684,7 @@
     <!-- ── 00 ABSTRACT ── -->
     <div class="section-heading">
       <span class="sec-num">00</span>
-      <h2>Abstract</h2>
+      <h2 id="abstract">Abstract</h2>
     </div>
 
     <p>In this project, we attempted to create a new tool to detect whether images on webpages across the Internet have been modified by artificial intelligence or feature any sort of artificial augmentation. To test this, we trained a custom CNN on the CIFAKE benchmark dataset of 120,000 real and AI-generated images. Through training, we achieved <strong>93.67% classification accuracy</strong>, outperforming a ResNet-18 transfer learning baseline. Our tool demonstrates that task-specific and low-resolution training produces more reliable detection than general pretrained models for this domain.</p>
@@ -668,7 +721,7 @@
     <!-- ── 01 INTRODUCTION ── -->
     <div class="section-heading">
       <span class="sec-num">01</span>
-      <h2>Introduction</h2>
+      <h2 id="introduction">Introduction</h2>
     </div>
 
     <p>On January 3rd, 2026, President Nicolas Maduro of Venezuela was captured and arrested by a United States military strike launched by President Donald Trump. On January 5th, 2026, the <a href="https://www.nytimes.com/2026/01/05/technology/nicolas-maduro-ai-images-deepfakes.html" target="_blank">New York Times published an article</a> exposing the use of artificial intelligence tools in the photos that spread rapidly across social media following Maduro's capture.<a href="#ref1" class="cite">[1]</a></p>
@@ -694,7 +747,7 @@
     <!-- ── 02 RELATED WORK ── -->
     <div class="section-heading">
       <span class="sec-num">02</span>
-      <h2>Related Work</h2>
+      <h2 id="related-work">Related Work</h2>
     </div>
 
     <p>Prior work in the field of visual disinformation spans the gamut of technical and qualitative research. Wang et al.<a href="#ref12" class="cite">[12]</a> demonstrated that a single forensic detector trained on a singular type of CNN generator has the ability to generalize to detect fakes from different and unseen architectures. The researchers showed that detectors did not need to be tailored for every new AI generator and that there are clear "fingerprints" that CNNs leave behind post-image alteration. While this result showed generalization is possible, they were clear that their work would have to be understood in light of the technology of their time, signalling a clear "for now" qualifier.</p>
@@ -710,7 +763,7 @@
     <!-- ── 03 DATASET ── -->
     <div class="section-heading">
       <span class="sec-num">03</span>
-      <h2>Dataset</h2>
+      <h2 id="dataset">Dataset</h2>
     </div>
 
     <p>For our project, we used the benchmark dataset <a href="https://www.kaggle.com/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images" target="_blank"><strong>CIFAKE</strong></a><a href="#ref8" class="cite">[8]</a>, which includes a collection of tens of thousands of real and AI photos. One of the most critical developments in the field of AI forensics has been the creation of the CIFAKE dataset in 2023. The dataset represented the first proper benchmark for distinguishing between real-life and AI photos. Even in the three years since the CIFAKE dataset was published, there have been major changes in how these tools attempt to target these issues.</p>
@@ -724,7 +777,7 @@
     <!-- ── 04 CURRENT TOOLS ── -->
     <div class="section-heading">
       <span class="sec-num">04</span>
-      <h2>Current Tools</h2>
+      <h2 id="current-tools">Current Tools</h2>
     </div>
 
     <p>To understand the gap that our project fills, the landscape of current AIGI detection technology has to be understood.</p>
@@ -755,7 +808,7 @@
     <!-- ── 05 ML APPROACH ── -->
     <div class="section-heading">
       <span class="sec-num">05</span>
-      <h2>Machine Learning Approach</h2>
+      <h2 id="ml-approach">Machine Learning Approach</h2>
     </div>
 
     <p>The project uses a Convolutional Neural Network (CNN) that is built from scratch in PyTorch, which is most effective for image classification tasks. The intuition behind CNNs lends itself naturally to our problem: CNNs can learn to detect learned visual patterns automatically, without being told explicitly what they should be looking for.</p>
@@ -810,7 +863,7 @@
     <!-- ── 06 RESULTS ── -->
     <div class="section-heading">
       <span class="sec-num">06</span>
-      <h2>Results</h2>
+      <h2 id="results">Results</h2>
     </div>
 
     <!-- Main comparison table (HTML, matching the image values) -->
@@ -923,7 +976,7 @@
     <!-- ── 07 LIMITATIONS ── -->
     <div class="section-heading">
       <span class="sec-num">07</span>
-      <h2>Limitations</h2>
+      <h2 id="limitations">Limitations</h2>
     </div>
 
     <p>The most pressing limitation of this project is one that was built into it from the start: the images that CIFAKE provides are 32x32 pixels. Real photographs, the kind embedded in news articles, shared across social media platforms, used by governments to shape public perception, are orders of magnitude larger. The subtle signals that distinguish an AI-generated image from a real one, the inconsistent shadows, the slightly wrong textures, the pixels that do not quite belong, exist at a level of detail that 32x32 images cannot reliably capture. When the browser extension encounters an image in the wild, it processes something fundamentally different from what the model was trained on. The gap itself matters.</p>
@@ -941,7 +994,7 @@
     <!-- ── 08 ETHICS ── -->
     <div class="section-heading">
       <span class="sec-num">08</span>
-      <h2>Ethics</h2>
+      <h2 id="ethics">Ethics</h2>
     </div>
 
     <p>While this problem attempts to address the broader ethical problems with how artificial intelligence has been used to generate and alter images, there are ethical concerns that we also had to address while creating this tool.</p>
@@ -959,7 +1012,7 @@
     <!-- ── 09 CONCLUSIONS ── -->
     <div class="section-heading">
       <span class="sec-num">09</span>
-      <h2>Conclusions</h2>
+      <h2 id="conclusions">Conclusions</h2>
     </div>
 
     <p>This project started with a straightforward question: if machine learning is part of what has made it harder to trust what we see online, can it also be part of what makes that trust recoverable? Based on what we found, the answer is yes, carefully, and with a clear understanding of how far that answer currently reaches.</p>
@@ -979,7 +1032,7 @@
     <!-- ── 10 REFERENCES ── -->
     <div class="section-heading">
       <span class="sec-num">10</span>
-      <h2>References</h2>
+      <h2 id="references">References</h2>
     </div>
 
     <ol class="ref-list">
@@ -1123,6 +1176,23 @@
     });
   });
 </script>
-
+<script>
+  (function() {
+    var tocLinks = document.querySelectorAll('.toc-list a');
+    var headings = Array.from(tocLinks).map(function(a) {
+      return document.querySelector(a.getAttribute('href'));
+    }).filter(Boolean);
+    window.addEventListener('scroll', function() {
+      var scrollY = window.scrollY + 100;
+      var current = headings[0];
+      headings.forEach(function(h) {
+        if (h.getBoundingClientRect().top + window.scrollY <= scrollY) current = h;
+      });
+      tocLinks.forEach(function(a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current.id);
+      });
+    });
+  })();
+</script>
 </body>
 </html>
