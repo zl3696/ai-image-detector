@@ -754,6 +754,8 @@
 
     <p>With this understanding comes the nexus of our project: trying to understand if artificially generated photos have a clear and distinct signature that can be properly categorized and flagged. The signal for distinguishing real from AI-generated images has now fully become sub-perceptual and statistical. It can only be seen in background pixel distributions, spatial inconsistencies, and frequency artifacts that no truly human-readable rule can capture. In this case, we use a CNN because it learns to read exactly these features without having to be explicitly told.</p>
 
+    <p>We hypothesize that a CNN trained from scratch on task-specific low-resolution data will outperform a frozen-backbone transfer learning approach because ImageNet pretraining encodes assumptions about high-resolution structure that actively hurt performance on 32×32 inputs</p>
+   
     <hr class="divider" />
 
     <!-- ── 02 RELATED WORK ── -->
