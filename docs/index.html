@@ -778,6 +778,11 @@
       <h2 id="dataset">Dataset</h2>
     </div>
 
+     <figure class="figure">
+      <img src="dataset-cover.png" alt="Sample of CIFAKE Dataset" style="width: 500px;" />
+      <figcaption> Sample of CIFAKE Dataset. Photo Credit: Jordan J. Bird </figcaption>
+    </figure>
+
     <p>For our project, we used the benchmark dataset <a href="https://www.kaggle.com/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images" target="_blank"><strong>CIFAKE</strong></a><a href="#ref8" class="cite">[8]</a>, which includes a collection of tens of thousands of real and AI photos. One of the most critical developments in the field of AI forensics has been the creation of the CIFAKE dataset in 2023. The dataset represented the first proper benchmark for distinguishing between real-life and AI photos. Even in the three years since the CIFAKE dataset was published, there have been major changes in how these tools attempt to target these issues.</p>
 
     <p>The dataset contains <strong>60,000 real camera-captured photographs</strong> and <strong>60,000 AI-generated images</strong>. A 32x32 RGB image has 3,072 input features per image, a figure calculated from 32x32x3. With 120,000 images in the CIFAKE set, that is a total of 120,000 x 3,072 input features. Before training, all images are resized, normalized, and converted into tensors. We carefully balanced the REAL and FAKE classes during sampling to prevent the model from developing a bias toward whichever class is more represented.</p>
