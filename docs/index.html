@@ -960,7 +960,7 @@
     <h3>Confusion Matrix Analysis</h3>
     <figure class="fig">
       <img src="confusion_matrix.png" alt="Side-by-side confusion matrices for ResNet-18 and Baseline CNN" />
-      <figcaption><strong>Figure 1. </strong>. Confusion matrices for both models. Left: ResNet-18. Right: Baseline CNN.</figcaption>
+      <figcaption>Figure 1. Confusion matrices for both models. Left: ResNet-18. Right: Baseline CNN.</figcaption>
     </figure>
 
     <p>The baseline CNN performed better overall, correctly classifying 9,492 real images and 9,242 fake images out of 10,000 images in each class. The model is slightly better at identifying real images than fake ones. It produced 508 false positives, where real images were incorrectly labeled as fake, and 758 false negatives, where fake images were incorrectly labeled as real. In comparison, ResNet-18 had more difficulty, especially with real images. It misclassified 1,408 real images as fake, which led to a lower precision for the REAL class compared with the baseline CNN. This suggests that ResNet-18 was more likely to over-predict the FAKE label, while the baseline CNN gave more balanced predictions between the two classes.</p>
@@ -968,7 +968,7 @@
     <h3>Training Curve Analysis</h3>
     <figure class="fig">
       <img src="training_curves.png" alt="Training and validation loss and accuracy curves for both models over 10 epochs" />
-      <figcaption><strong>Figure 2. </strong>. Training curves across 10 epochs. Top: ResNet-18. Bottom: Baseline CNN.</figcaption>
+      <figcaption>Figure 2. Training curves across 10 epochs. Top: ResNet-18. Bottom: Baseline CNN.</figcaption>
     </figure>
 
     <p>The baseline CNN showed smooth and consistent improvement over the 10 training epochs. Its training loss steadily decreased from about 0.35 to below 0.10, while the validation accuracy stabilized around 93.8%. This suggests that the model was learning effectively and generalizing well to unseen data, without strong signs of overfitting.</p>
@@ -1018,7 +1018,7 @@
 
   <figure class="fig">
     <img src="experiment_a_resolution.png" alt="Experiment A: Resolution ablation results comparing 32x32 vs 224x224 inputs on frozen ResNet-18" style="width:100%; max-width:900px; display:block; margin:0 auto;">
-    <figcaption>Figure 3: Resolution ablation — frozen ResNet-18 accuracy at 32×32 vs. 224×224 input. Upsampling to the native ImageNet resolution improves accuracy by 11.4 points, confirming resolution mismatch as a genuine bottleneck.</figcaption>
+    <figcaption>Figure 3. Resolution ablation — frozen ResNet-18 accuracy at 32×32 vs. 224×224 input. Upsampling to the native ImageNet resolution improves accuracy by 11.4 points, confirming resolution mismatch as a genuine bottleneck.</figcaption>
   </figure>
 
   <p>  
@@ -1033,7 +1033,7 @@
 
    <figure class="fig">
     <img src="experiment_b_finetuning.png" alt="Experiment B: Fine-tuning depth ablation across four ResNet-18 configurations"/>
-    <figcaption>Figure 4: Fine-tuning depth ablation — ResNet-18 accuracy at 224×224 across four backbone configurations. Unfreezing layer4 alone accounts for nearly the entire performance gain; further unfreezing yields diminishing returns.</figcaption>
+    <figcaption>Figure 4. Fine-tuning depth ablation — ResNet-18 accuracy at 224×224 across four backbone configurations. Unfreezing layer4 alone accounts for nearly the entire performance gain; further unfreezing yields diminishing returns.</figcaption>
   </figure>
 
 
@@ -1098,7 +1098,7 @@
 
   <figure class="fig">
     <img src="gradcam_misclassified.png" alt="GradCAM results" />
-    <figcaption><strong>Figure 5. —</strong> GradCAM heatmap results showing which image regions drove the model's FAKE/REAL decision.</figcaption>
+    <figcaption>Figure 5. GradCAM heatmap results showing which image regions drove the model's FAKE/REAL decision.</figcaption>
   </figure>
     
 
