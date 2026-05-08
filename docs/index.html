@@ -734,6 +734,119 @@
   .io-arrow { display: none; }
   .io-strip .io-box:last-child { border-left: none; border-top: 1px solid #ddd; }
 }
+      .try-it-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid #ddd;
+  margin: 1.8rem 0;
+}
+.try-it-col {
+  padding: 0;
+}
+.try-it-col:first-child {
+  border-right: 1px solid #ddd;
+}
+.try-it-col-header {
+  padding: 1rem 1.2rem 0.8rem;
+  border-bottom: 1px solid #f0ece4;
+  background: #fff;
+}
+.try-it-col-kicker {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b03020;
+  margin-bottom: 0.25rem;
+}
+.try-it-col-title {
+  font-family: 'Lora', serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.2rem;
+}
+.try-it-col-desc {
+  font-size: 0.78rem;
+  color: #999;
+  line-height: 1.5;
+}
+.hf-iframe-wrap {
+  background: #fff;
+}
+.hf-iframe-wrap iframe {
+  width: 100%;
+  height: 380px;
+  border: none;
+  display: block;
+}
+.ext-download-body {
+  padding: 1.2rem;
+  background: #fff;
+  height: 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.ext-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.ext-steps li {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid #f4f0eb;
+  font-size: 0.84rem;
+  color: #555;
+  line-height: 1.5;
+}
+.ext-steps li:last-child { border-bottom: none; }
+.ext-step-num {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #b03020;
+  background: #fdf0ee;
+  border: 1px solid #f0d0ca;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.ext-download-btn {
+  display: block;
+  width: 100%;
+  padding: 0.7rem;
+  background: #1a1a1a;
+  color: #fff;
+  text-align: center;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.15s;
+  margin-top: 1rem;
+}
+.ext-download-btn:hover {
+  background: #b03020;
+  color: #fff;
+}
+@media (max-width: 640px) {
+  .try-it-grid { grid-template-columns: 1fr; }
+  .try-it-col:first-child { border-right: none; border-bottom: 1px solid #ddd; }
+  .hf-iframe-wrap iframe { height: 320px; }
+  .ext-download-body { height: auto; }
+}
   </style>
 </head>
 <body>
@@ -922,7 +1035,69 @@
 
     <hr class="divider" />
 
-    <!-- ── 05 ML APPROACH ── -->
+    <hr class="divider" />
+
+<!-- ── 05 TRY IT ── -->
+<div class="section-heading">
+  <span class="sec-num">05</span>
+  <h2 id="try-it">Try It Your Self!</h2>
+</div>
+
+<p>You can test the model directly below, or install the Chrome extension to automatically scan images as you browse the web.</p>
+
+<div class="try-it-grid">
+
+  <div class="try-it-col">
+    <div class="try-it-col-header">
+      <div class="try-it-col-kicker">Live Demo</div>
+      <div class="try-it-col-title">Upload any image</div>
+      <div class="try-it-col-desc">The model will classify it as REAL or FAKE in real time.</div>
+    </div>
+    <div class="hf-iframe-wrap">
+      <iframe
+        src="https://emilyl613-ai-image-detector.hf.space"
+        title="AI Image Detector"
+        allow="accelerometer; camera; microphone">
+      </iframe>
+    </div>
+  </div>
+
+  <div class="try-it-col">
+    <div class="try-it-col-header">
+      <div class="try-it-col-kicker">Chrome Extension</div>
+      <div class="try-it-col-title">Scan images as you browse</div>
+      <div class="try-it-col-desc">Auto-labels every image on any webpage REAL or FAKE.</div>
+    </div>
+    <div class="ext-download-body">
+      <ol class="ext-steps">
+        <li>
+          <span class="ext-step-num">1</span>
+          <span>Click the download button below to save the <strong>.zip</strong> file to your computer.</span>
+        </li>
+        <li>
+          <span class="ext-step-num">2</span>
+          <span>Open Chrome and go to <strong>chrome://extensions</strong> in your address bar.</span>
+        </li>
+        <li>
+          <span class="ext-step-num">3</span>
+          <span>Enable <strong>Developer Mode</strong> using the toggle in the top-right corner.</span>
+        </li>
+        <li>
+          <span class="ext-step-num">4</span>
+          <span>Click <strong>Load unpacked</strong> and select the unzipped extension folder.</span>
+        </li>
+      </ol>
+      <a class="ext-download-btn"
+         href="https://github.com/zl3696/ai-image-detector/raw/main/ai-detector-extension%20(1).zip"
+         target="_blank">
+        Download Chrome Extension →
+      </a>
+    </div>
+  </div>
+
+</div>
+
+    <!-- ── 06 ML APPROACH ── -->
     <div class="section-heading">
       <span class="sec-num">05</span>
       <h2 id="ml-approach">Machine Learning Approach</h2>
@@ -1011,7 +1186,7 @@
 
     <hr class="divider" />
 
-    <!-- ── 06 RESULTS ── -->
+    <!-- ── 07 RESULTS ── -->
     <div class="section-heading">
       <span class="sec-num">06</span>
       <h2 id="results">Results</h2>
@@ -1124,7 +1299,7 @@
 
     <hr class="divider" />
 
-    <!-- ── 07 ABALATION STUDY ── -->
+    <!-- ── 08 ABALATION STUDY ── -->
     <div class="section-heading">
       <span class="sec-num">07</span>
       <h2 id="abalation-study"> Why Did ResNet-18 Underperform? An Abalation Study</h2>
@@ -1179,7 +1354,7 @@
 
        <hr class="divider" />
     
-    <!-- ── 08 LIMITATIONS ── -->
+    <!-- ── 09 LIMITATIONS ── -->
     <div class="section-heading">
       <span class="sec-num">08</span>
       <h2 id="limitations">Limitations</h2>
@@ -1197,7 +1372,7 @@
 
     <hr class="divider" />
 
-    <!-- ── 09 ETHICS ── -->
+    <!-- ── 10 ETHICS ── -->
     <div class="section-heading">
       <span class="sec-num">09</span>
       <h2 id="ethics">Ethics</h2>
@@ -1215,7 +1390,7 @@
 
     <hr class="divider" />
 
-    <!-- ── 10 CONCLUSIONS ── -->
+    <!-- ── 11 CONCLUSIONS ── -->
     <div class="section-heading">
       <span class="sec-num">10</span>
       <h2 id="conclusions">Conclusions</h2>
@@ -1243,7 +1418,7 @@
 
     <hr class="divider" />
 
-    <!-- ── 11 REFERENCES ── -->
+    <!-- ── 12 REFERENCES ── -->
     <div class="section-heading">
       <span class="sec-num">11</span>
       <h2 id="references">References</h2>
