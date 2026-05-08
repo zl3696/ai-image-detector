@@ -1000,7 +1000,7 @@
     </div>
 
   <p>
-    Our original ResNet-18 achieved only 88.58% accuracy despite its deeper architecture — 
+    Our original ResNet-18 achieved only 88.58% accuracy despite its deeper architecture, which is 
     significantly below our custom CNN. Rather than accepting this at face value, we hypothesized 
     two culprits: input resolution mismatch and an overly rigid frozen backbone. Since ResNet-18 
     was pretrained on ImageNet at 224×224, feeding it 32×32 CIFAKE images may have degraded the 
@@ -1010,40 +1010,40 @@
   </p>
 
   <p>
-    To test resolution, we held the backbone frozen and compared 32×32 versus 224×224 inputs 
-    directly. Upsampling alone improved accuracy from 77.3% to 88.7% — an 11.4 point gain that 
-    confirms resolution was a genuine bottleneck. However, 88.7% still fell short of our custom 
-    CNN, which told us resolution wasn't the whole story.
+    To test the effect of resolution, we kept the backbone frozen and directly compared 32×32 inputs with 224×224 inputs. 
+    Upsampling alone increased accuracy from 77.3% to 88.7%, an 11.4-point improvement, showing that resolution was 
+    a real bottleneck for the original ResNet-18 setup. However, the model still did not reach the performance of our custom CNN, 
+    which suggests that resolution was important, but not the only issue.
   </p>
 
-  <figure>
+  <figure class="fig">
     <img src="experiment_a_resolution.png" alt="Experiment A: Resolution ablation results comparing 32x32 vs 224x224 inputs on frozen ResNet-18" style="width:100%; max-width:900px; display:block; margin:0 auto;">
-    <figcaption>Figure X: Resolution ablation — frozen ResNet-18 accuracy at 32×32 vs. 224×224 input. Upsampling to the native ImageNet resolution improves accuracy by 11.4 points, confirming resolution mismatch as a genuine bottleneck.</figcaption>
+    <figcaption>Figure 3: Resolution ablation — frozen ResNet-18 accuracy at 32×32 vs. 224×224 input. Upsampling to the native ImageNet resolution improves accuracy by 11.4 points, confirming resolution mismatch as a genuine bottleneck.</figcaption>
   </figure>
 
-  <p>
-    Turning to fine-tuning depth, we fixed the input at 224×224 and progressively unfroze layers 
-    of the backbone across four configurations: frozen head only, unfreeze layer4, unfreeze 
-    layer3+4, and full fine-tune. The results were striking — simply unfreezing layer4 jumped 
-    accuracy from 88.7% to 97.6%, a nearly 9 point gain from releasing a single layer. Beyond 
-    that, the returns diminished sharply: unfreezing layer3+4 yielded 97.57% and a full fine-tune 
-    97.53%, essentially flat. This plateau is itself informative — it suggests that ImageNet's 
-    lower-level features (edges, textures, basic shapes) transfer well to AI image detection, and 
-    that the mismatch was concentrated specifically in layer4's high-level semantic representations.
+  <p>  
+    For the fine-tuning depth experiment, we kept the input size at 224×224 and gradually unfroze the ResNet-18 
+    backbone using four settings: frozen head only, unfreezing layer4, unfreezing layer3+4, and full fine-tuning. 
+    The biggest improvement came from only unfreezing layer4, where the accuracy increased from 88.7% to 97.6%, 
+    giving almost a 9-point gain from adjusting just one layer. After that, the improvement became very small: 
+    unfreezing layer3+4 gave 97.57%, while full fine-tuning gave 97.53%. This plateau is important because it suggests 
+    that the lower-level ImageNet features, such as edges, textures, and basic shapes, already transfer well to AI image detection. 
+    The main mismatch seems to come from layer4, where the model learns higher-level semantic features.
   </p>
 
-  <figure>
-    <img src="experiment_b_finetuning.png" alt="Experiment B: Fine-tuning depth ablation across four ResNet-18 configurations" style="width:100%; max-width:900px; display:block; margin:0 auto;">
-    <figcaption>Figure X: Fine-tuning depth ablation — ResNet-18 accuracy at 224×224 across four backbone configurations. Unfreezing layer4 alone accounts for nearly the entire performance gain; further unfreezing yields diminishing returns.</figcaption>
+   <figure class="fig">
+    <img src="experiment_b_finetuning.png" alt="Experiment B: Fine-tuning depth ablation across four ResNet-18 configurations"/>
+    <figcaption>Figure 4: Fine-tuning depth ablation — ResNet-18 accuracy at 224×224 across four backbone configurations. Unfreezing layer4 alone accounts for nearly the entire performance gain; further unfreezing yields diminishing returns.</figcaption>
   </figure>
 
+
   <p>
-    Together, these experiments confirm that the original ResNet-18 was doubly disadvantaged: 
-    resolution mismatch degraded early-layer activations before any learning could occur, while 
-    the frozen backbone prevented the model from adapting where it actually needed to. A properly 
-    configured ResNet-18 — upsampled input, layer4 unfrozen — substantially outperforms both the 
-    original ResNet-18 setup and our custom CNN, achieving 97.6% accuracy with strong precision 
-    and recall across both classes.
+    These experiments show that the original ResNet-18 setup had two main limitations. 
+    First, the lower input resolution affected the early feature extraction before the model could learn 
+    meaningful patterns. Second, keeping the backbone frozen limited the model’s ability to adjust 
+    to this specific dataset. When ResNet-18 was set up more appropriately, with upsampled inputs 
+    and layer4 unfrozen, it performed much better than both the original ResNet-18 and our custom CNN, 
+    reaching 97.6% accuracy with strong precision and recall for both classes.
   </p>
 </section>
 
@@ -1098,7 +1098,7 @@
 
   <figure class="fig">
     <img src="gradcam_misclassified.png" alt="GradCAM results" />
-    <figcaption><strong>Figure 3. —</strong> GradCAM heatmap results showing which image regions drove the model's FAKE/REAL decision.</figcaption>
+    <figcaption><strong>Figure 5. —</strong> GradCAM heatmap results showing which image regions drove the model's FAKE/REAL decision.</figcaption>
   </figure>
     
 
