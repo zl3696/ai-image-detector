@@ -730,7 +730,7 @@
 
     <figure class="figure">
       <img src="Guardian%20Photo.avif" alt="AI augmentation of Armstrong's arrest" style="width: 500px;" />
-      <figcaption> AI augmentation of Armstrong's arrest. Photo Credit: The Guardian</figcaption>
+      <figcaption> <strong>AI augmentation of Armstrong's arrest. Photo Credit: The Guardian</strong></figcaption>
     </figure>
     
     <p>On January 22nd, 2026, civil rights attorney and activist Nekima Levy Armstrong was arrested in Minnesota after an ICE protest. That morning, Kristi Noem, the former U.S. Secretary of Homeland Security, posted a photo from her arrest on X. Thirty minutes later, the White House posted the same photo on X. Only this time, Levy Armstrong was shown in distress and actively sobbing toward the camera. With further investigation, the <a href="https://www.theguardian.com/us-news/2026/jan/22/white-house-ice-protest-arrest-altered-image" target="_blank">corruption of the photos was clear</a>.<a href="#ref2" class="cite">[2]</a></p>
@@ -741,7 +741,7 @@
 
     <figure class="figure">
       <img src="news_consumption_on_social_media.png" alt="Table showing % of U.S. adults who say they get news from social media" style="width: 500px;" />
-      <figcaption> % of U.S. adults who say they get news from social media. Photo Credit: Pew Research Center</figcaption>
+      <figcaption> <strong>Percent of U.S. adults who say they get news from social media. Photo Credit: Pew Research Center</strong></figcaption>
     </figure>
     
     <p>With around <a href="https://www.pewresearch.org/journalism/fact-sheet/social-media-and-news-fact-sheet/" target="_blank"><strong>53% of U.S. adults getting their news from social media</strong></a><a href="#ref6" class="cite">[6]</a>, a number that has remained relatively stable since the Covid-19 pandemic, these uses of artificial intelligence have become more and more concerning as models grow better and harder to perceive. Without proper guardrails, there will be little protection for the average citizen, who perceptibly will not be able to check every piece of media that they casually consume.</p>
@@ -782,7 +782,7 @@
 
      <figure class="figure">
       <img src="dataset-cover.png" alt="Sample of CIFAKE Dataset" style="width: 500px;" />
-      <figcaption> Sample of CIFAKE Dataset. Photo Credit: Jordan J. Bird </figcaption>
+      <figcaption><strong>Sample of CIFAKE Dataset. Photo Credit: Jordan J. Bird</strong></figcaption>
     </figure>
 
     <p>For our project, we used the benchmark dataset <a href="https://www.kaggle.com/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images" target="_blank"><strong>CIFAKE</strong></a><a href="#ref8" class="cite">[8]</a><a href="#ref15" class="cite">[15]</a>, which includes a collection of tens of thousands of real and AI photos. One of the most critical developments in the field of AI forensics has been the creation of the CIFAKE dataset in 2023. The dataset represented the first proper benchmark for distinguishing between real-life and AI photos. Even in the three years since the CIFAKE dataset was published, there have been major changes in how these tools attempt to target these issues.</p>
@@ -959,7 +959,7 @@
     <h3>Confusion Matrix Analysis</h3>
     <figure class="fig">
       <img src="confusion_matrix.png" alt="Side-by-side confusion matrices for ResNet-18 and Baseline CNN" />
-      <figcaption><strong>Figure 1. —</strong>. Confusion matrices for both models. Left: ResNet-18. Right: Baseline CNN.</figcaption>
+      <figcaption><strong>Figure 1. </strong>. Confusion matrices for both models. Left: ResNet-18. Right: Baseline CNN.</figcaption>
     </figure>
 
     <p>The baseline CNN performed better overall, correctly classifying 9,492 real images and 9,242 fake images out of 10,000 images in each class. The model is slightly better at identifying real images than fake ones. It produced 508 false positives, where real images were incorrectly labeled as fake, and 758 false negatives, where fake images were incorrectly labeled as real. In comparison, ResNet-18 had more difficulty, especially with real images. It misclassified 1,408 real images as fake, which led to a lower precision for the REAL class compared with the baseline CNN. This suggests that ResNet-18 was more likely to over-predict the FAKE label, while the baseline CNN gave more balanced predictions between the two classes.</p>
@@ -967,7 +967,7 @@
     <h3>Training Curve Analysis</h3>
     <figure class="fig">
       <img src="training_curves.png" alt="Training and validation loss and accuracy curves for both models over 10 epochs" />
-      <figcaption><strong>Figure 2. —</strong>. Training curves across 10 epochs. Top: ResNet-18. Bottom: Baseline CNN.</figcaption>
+      <figcaption><strong>Figure 2. </strong>. Training curves across 10 epochs. Top: ResNet-18. Bottom: Baseline CNN.</figcaption>
     </figure>
 
     <p>The baseline CNN showed smooth and consistent improvement over the 10 training epochs. Its training loss steadily decreased from about 0.35 to below 0.10, while the validation accuracy stabilized around 93.8%. This suggests that the model was learning effectively and generalizing well to unseen data, without strong signs of overfitting.</p>
@@ -1038,10 +1038,11 @@
 
     <p>We trained and evaluated two classifiers against CIFAKE's 120,000 real and AI-generated images. The Baseline CNN reached 93.67% accuracy with stable, consistent training curves. Compared to CIFAKE's SOTA of 92.98% GradCAM explainability, our 93.67% marginally exceeds this. ResNet-18, despite the theoretical advantage of pretraining, achieved 88.58% and showed high volatility across epochs, a consequence, we believe, of the mismatch between its pretraining data and the low-resolution images it was asked to adapt to. The simpler, purpose-built model outperformed the more complex one, which is its own kind of finding: task-specific training matters, and a model's prior knowledge can work against it when the domain shifts enough.</p>
 
-    <figure class="figure">
+    <figure class="fig">
       <img src="gradcam_misclassified.png" alt="GradCAM results" style="width: 500px;" />
       <figcaption><strong>Figure 3. —</strong> GradCAM heatmap results showing which image regions drove the model's FAKE/REAL decision.</figcaption>
     </figure>
+    
 
 
     
