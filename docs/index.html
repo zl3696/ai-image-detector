@@ -1038,10 +1038,10 @@
 
     <p>We trained and evaluated two classifiers against CIFAKE's 120,000 real and AI-generated images. The Baseline CNN reached 93.67% accuracy with stable, consistent training curves. Compared to CIFAKE's SOTA of 92.98% GradCAM explainability, our 93.67% marginally exceeds this. ResNet-18, despite the theoretical advantage of pretraining, achieved 88.58% and showed high volatility across epochs, a consequence, we believe, of the mismatch between its pretraining data and the low-resolution images it was asked to adapt to. The simpler, purpose-built model outperformed the more complex one, which is its own kind of finding: task-specific training matters, and a model's prior knowledge can work against it when the domain shifts enough.</p>
 
-    <figure class="fig">
-      <img src="gradcam_misclassified.png" alt="GradCAM results" style="width: 500px;" />
-      <figcaption><strong>Figure 3. —</strong> GradCAM heatmap results showing which image regions drove the model's FAKE/REAL decision.</figcaption>
-    </figure>
+  <figure class="fig">
+    <img src="gradcam_misclassified.png" alt="GradCAM results" />
+    <figcaption><strong>Figure 3. —</strong> GradCAM heatmap results showing which image regions drove the model's FAKE/REAL decision.</figcaption>
+  </figure>
     
 
 
