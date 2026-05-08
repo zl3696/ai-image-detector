@@ -837,6 +837,20 @@
 
     <p>The output is a single scalar value between 0 and 1, as produced by the sigmoid activation. When values are above 0.5, they are classified as FAKE. When values are at or below 0.5, they are classified as REAL.</p>
 
+    <!-- Input / Output strip -->
+    <div class="io-strip fade-in">
+      <div class="io-box">
+        <div class="io-box-label">Input</div>
+        <div class="io-box-title">Single RGB Image</div>
+        <div class="io-box-detail">Tensor shape [3, 32, 32] &nbsp;·&nbsp; 3,072 features</div>
+      </div>
+      <div class="io-arrow">→</div>
+      <div class="io-box">
+        <div class="io-box-label">Output</div>
+        <div class="io-box-title">Scalar value 0 – 1</div>
+        <div class="io-box-detail">Above 0.5 → FAKE &nbsp;·&nbsp; At or below 0.5 → REAL</div>
+      </div>
+    </div>
     <p>The architecture itself has three stages.</p>
 
     <p>The first stage is feature extraction where three convolutional layers will progressively compress and abstract the image. The first block detects low level features such as edges and textures, making use of 32 filters. The second block detects the mid level patterns, utilizing 64 filters. The third block detects higher-order structural features, using 128 filters. Each of the blocks are followed by ReLU activation, which will help remove the unhelpful negative values, focusing on more meaningful signals from the photos, as well as max pooling, which will downsample the image.</p>
@@ -844,7 +858,41 @@
     <p>The second stage is the classification head. Once the convolutional blocks are able to reduce the image to a smaller feature map (128x2x2), it will be flattened and passed through the two fully connected layers. A dropout layer will randomly deactivate half of the neurons during training, which is a feature that helps prevent overfitting, which will be used for regularization.</p>
 
     <p>The third stage is a single sigmoid output neuron that compresses the model's prediction to a value between 0 and 1, with values above 0.5 being labeled as FAKE and below 0.5 being labeled as REAL. This binary classification is suited to the yes / no nature of the question that the browser project will aim to answer.</p>
-
+    <!-- 3-stage architecture cards -->
+    <div class="arch-stages fade-in">
+ 
+      <div class="arch-stage">
+        <div class="arch-stage-num">Stage 01</div>
+        <div class="arch-stage-title">Feature Extraction</div>
+        <div class="arch-stage-body">
+          Three convolutional blocks progressively compress and abstract the image.
+          The first block detects <strong>low-level features</strong> (edges and textures) using 32 filters.
+          The second picks up <strong>mid-level patterns</strong> with 64 filters.
+          The third captures <strong>higher-order structure</strong> with 128 filters.
+          Each block ends with ReLU activation (removes unhelpful negative values) and max pooling (downsamples the image).
+        </div>
+      </div>
+ 
+      <div class="arch-stage">
+        <div class="arch-stage-num">Stage 02</div>
+        <div class="arch-stage-title">Classification Head</div>
+        <div class="arch-stage-body">
+          Once the convolutional blocks reduce the image to a 128×2×2 feature map, it is flattened and passed through two fully connected layers.
+          A <strong>dropout layer</strong> randomly deactivates half of the neurons during training to prevent the model from over-relying on specific neurons and guards against overfitting.
+        </div>
+      </div>
+ 
+      <div class="arch-stage">
+        <div class="arch-stage-num">Stage 03</div>
+        <div class="arch-stage-title">Output</div>
+        <div class="arch-stage-body">
+          A single <strong>sigmoid output neuron</strong> squashes the model's prediction to a value between 0 and 1.
+          Values above 0.5 are labeled FAKE; at or below 0.5, REAL.
+          This binary setup is a natural fit for the yes/no question the browser extension aims to answer.
+        </div>
+      </div>
+ 
+    </div>
     <p>For training, the project uses Binary Cross-Entropy (BCELoss) as the loss function, which measures how far off the model's predictions are from the ground truth labels. The model is penalized proportionally to how confident and wrong it is. A wrong prediction made with 99% confidence will incur a much larger penalty than a wrong prediction made with 51% confidence. The optimizer used is Adam, with a learning rate of 0.001. Adam is an adaptive optimizer, meaning it adjusts its learning rates on a per-parameter basis, which makes it well suited for image classification tasks like this one. The model is trained over 10 epochs, with validation tracked after each one to monitor accuracy and catch any overfitting early.</p>
 
     <p>To ensure a fair comparison between both models, all training hyperparameters were kept consistent and adopted from the course Lab 6 baseline.</p>
