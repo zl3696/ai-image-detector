@@ -688,6 +688,52 @@
   .arch-stage  { border-right: none; border-bottom: 1px solid #ddd; }
   .arch-stage:last-child { border-bottom: none; }
 }
+      .io-strip {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0;
+  border: 1px solid #ddd;
+  margin: 1.8rem 0;
+  background: #fff;
+}
+.io-box {
+  padding: 1.1rem 1.3rem;
+}
+.io-box-label {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b03020;
+  margin-bottom: 0.3rem;
+}
+.io-box-title {
+  font-family: 'Lora', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.25rem;
+}
+.io-box-detail {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.72rem;
+  color: #777;
+}
+.io-arrow {
+  font-size: 1.2rem;
+  color: #ddd;
+  padding: 0 0.5rem;
+}
+.io-strip .io-box:last-child {
+  border-left: 1px solid #ddd;
+}
+@media (max-width: 640px) {
+  .io-strip { grid-template-columns: 1fr; }
+  .io-arrow { display: none; }
+  .io-strip .io-box:last-child { border-left: none; border-top: 1px solid #ddd; }
+}
   </style>
 </head>
 <body>
