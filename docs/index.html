@@ -636,7 +636,58 @@
     @media (max-width: 1200px) {
       .toc-wrapper { display: none; }
     }
-
+  .arch-stages {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin: 1.8rem 0;
+  border: 1px solid #ddd;
+}
+.arch-stage {
+  padding: 1.3rem 1.3rem 1.4rem;
+  border-right: 1px solid #ddd;
+  background: #fff;
+}
+.arch-stage:last-child { border-right: none; }
+.arch-stage-num {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b03020;
+  margin-bottom: 0.35rem;
+}
+.arch-stage-title {
+  font-family: 'Lora', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.7rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid #eee;
+}
+.arch-stage-body {
+  font-size: 0.84rem;
+  color: #555;
+  line-height: 1.6;
+}
+.arch-tag {
+  display: inline-block;
+  background: #f4f0eb;
+  border: 1px solid #e0d8ce;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  color: #7a5c40;
+  padding: 0.1em 0.45em;
+  margin: 0.15em 0.1em 0 0;
+}
+.arch-tags { margin-top: 0.7rem; }
+@media (max-width: 640px) {
+  .arch-stages { grid-template-columns: 1fr; }
+  .arch-stage  { border-right: none; border-bottom: 1px solid #ddd; }
+  .arch-stage:last-child { border-bottom: none; }
+}
   </style>
 </head>
 <body>
