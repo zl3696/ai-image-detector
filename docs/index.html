@@ -302,7 +302,7 @@
     /* ========================================
        8. FIGURES AND IMAGES
        To add an image:
-         <figure class="fig">
+         <figure class="figure">
            <img src="assets/images/YOURFILE.png" alt="description" />
            <figcaption>Your caption</figcaption>
          </figure>
@@ -1041,8 +1041,9 @@
     <figure class="figure">
       <img src="gradcam_misclassified.png" alt="GradCAM results" style="width: 500px;" />
       <figcaption><strong>Figure 3. —</strong> GradCAM heatmap results showing which image regions drove the model's FAKE/REAL decision.</figcaption>
-<strong>Figure 3. —</strong>
-       </figure>
+    </figure>
+
+
     
     <p>We took the better-performing model and built it into a Chrome Manifest V3 browser extension. The extension scans images on a webpage automatically, sends them to the classifier, and returns a real-or-fake label alongside a confidence score, surfacing flagged images in a side panel with GradCAM heatmaps that show which regions of the image drove the model's decision. Looking at the misclassified images, patterns emerge. False positives, which are real images flagged as fake, tend to draw the model's attention to high-contrast edges and motion blur, features that can appear in real photographs under difficult shooting conditions. False negatives, where AI-generated images slipped through, often show the model focusing on background regions rather than the subject, suggesting it is reading scene-level coherence rather than the fine-grained artifacting that actually marks AI generation. These are not just interesting observations, rather, they are a roadmap for what to improve.</p>
 
