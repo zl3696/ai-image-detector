@@ -1031,12 +1031,11 @@
     The main mismatch seems to come from layer4, where the model learns higher-level semantic features.
   </p>
 
-   <figure class="fig">
+  <figure class="fig">
     <img src="experiment_b_finetuning.png" alt="Experiment B: Fine-tuning depth ablation across four ResNet-18 configurations"/>
-    <figcaption>Figure 4. Fine-tuning depth ablation — ResNet-18 accuracy at 224×224 across four backbone configurations. Unfreezing layer4 alone accounts for nearly the entire performance gain; further unfreezing yields diminishing returns.</figcaption>
+    <figcaption>Figure 4. Fine-tuning depth ablation — ResNet-18 accuracy at 224×224 across four backbone configurations. Unfreezing layer4 accounts for nearly the entire performance gain; further unfreezing yields diminishing returns.</figcaption>
   </figure>
-
-
+  
   <p>
     These experiments show that the original ResNet-18 setup had two main limitations. 
     First, the lower input resolution affected the early feature extraction before the model could learn 
@@ -1047,7 +1046,6 @@
   </p>
 </section>
 
-    
        <hr class="divider" />
     
     <!-- ── 08 LIMITATIONS ── -->
