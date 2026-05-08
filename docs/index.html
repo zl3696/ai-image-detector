@@ -651,9 +651,10 @@
     <li><a href="#ml-approach">05 ML Approach</a></li>
     <li><a href="#results">06 Results</a></li>
     <li><a href="#limitations">07 Limitations</a></li>
-    <li><a href="#ethics">08 Ethics</a></li>
-    <li><a href="#conclusions">09 Conclusions</a></li>
-    <li><a href="#references">10 References</a></li>
+    <li><a href="#ablation-study">08 Ablation Study</a></li>
+    <li><a href="#ethics">09 Ethics</a></li>
+    <li><a href="#conclusions">10 Conclusions</a></li>
+    <li><a href="#references">11 References</a></li>
   </ul>
 </div>
 <!--  Navigation
@@ -992,9 +993,66 @@
 
     <hr class="divider" />
 
-    <!-- ── 07 LIMITATIONS ── -->
+    <!-- ── 07 ABALATION STUDY ── -->
     <div class="section-heading">
       <span class="sec-num">07</span>
+      <h2 id="abalation-study"> Why Did ResNet-18 Underperform? An Abalation Study</h2>
+    </div>
+
+  <p>
+    Our original ResNet-18 achieved only 88.58% accuracy despite its deeper architecture — 
+    significantly below our custom CNN. Rather than accepting this at face value, we hypothesized 
+    two culprits: input resolution mismatch and an overly rigid frozen backbone. Since ResNet-18 
+    was pretrained on ImageNet at 224×224, feeding it 32×32 CIFAKE images may have degraded the 
+    spatial activations its early layers depend on; simultaneously, freezing all but the final 
+    classification head may have prevented it from adapting its high-level representations to the 
+    AI-detection task at all. We ran two controlled experiments to isolate each factor.
+  </p>
+
+  <p>
+    To test resolution, we held the backbone frozen and compared 32×32 versus 224×224 inputs 
+    directly. Upsampling alone improved accuracy from 77.3% to 88.7% — an 11.4 point gain that 
+    confirms resolution was a genuine bottleneck. However, 88.7% still fell short of our custom 
+    CNN, which told us resolution wasn't the whole story.
+  </p>
+
+  <figure>
+    <img src="experiment_a_resolution.png" alt="Experiment A: Resolution ablation results comparing 32x32 vs 224x224 inputs on frozen ResNet-18" style="width:100%; max-width:900px; display:block; margin:0 auto;">
+    <figcaption>Figure X: Resolution ablation — frozen ResNet-18 accuracy at 32×32 vs. 224×224 input. Upsampling to the native ImageNet resolution improves accuracy by 11.4 points, confirming resolution mismatch as a genuine bottleneck.</figcaption>
+  </figure>
+
+  <p>
+    Turning to fine-tuning depth, we fixed the input at 224×224 and progressively unfroze layers 
+    of the backbone across four configurations: frozen head only, unfreeze layer4, unfreeze 
+    layer3+4, and full fine-tune. The results were striking — simply unfreezing layer4 jumped 
+    accuracy from 88.7% to 97.6%, a nearly 9 point gain from releasing a single layer. Beyond 
+    that, the returns diminished sharply: unfreezing layer3+4 yielded 97.57% and a full fine-tune 
+    97.53%, essentially flat. This plateau is itself informative — it suggests that ImageNet's 
+    lower-level features (edges, textures, basic shapes) transfer well to AI image detection, and 
+    that the mismatch was concentrated specifically in layer4's high-level semantic representations.
+  </p>
+
+  <figure>
+    <img src="experiment_b_finetuning.png" alt="Experiment B: Fine-tuning depth ablation across four ResNet-18 configurations" style="width:100%; max-width:900px; display:block; margin:0 auto;">
+    <figcaption>Figure X: Fine-tuning depth ablation — ResNet-18 accuracy at 224×224 across four backbone configurations. Unfreezing layer4 alone accounts for nearly the entire performance gain; further unfreezing yields diminishing returns.</figcaption>
+  </figure>
+
+  <p>
+    Together, these experiments confirm that the original ResNet-18 was doubly disadvantaged: 
+    resolution mismatch degraded early-layer activations before any learning could occur, while 
+    the frozen backbone prevented the model from adapting where it actually needed to. A properly 
+    configured ResNet-18 — upsampled input, layer4 unfrozen — substantially outperforms both the 
+    original ResNet-18 setup and our custom CNN, achieving 97.6% accuracy with strong precision 
+    and recall across both classes.
+  </p>
+</section>
+
+    
+       <hr class="divider" />
+    
+    <!-- ── 08 LIMITATIONS ── -->
+    <div class="section-heading">
+      <span class="sec-num">08</span>
       <h2 id="limitations">Limitations</h2>
     </div>
 
@@ -1010,9 +1068,9 @@
 
     <hr class="divider" />
 
-    <!-- ── 08 ETHICS ── -->
+    <!-- ── 09 ETHICS ── -->
     <div class="section-heading">
-      <span class="sec-num">08</span>
+      <span class="sec-num">09</span>
       <h2 id="ethics">Ethics</h2>
     </div>
 
@@ -1028,9 +1086,9 @@
 
     <hr class="divider" />
 
-    <!-- ── 09 CONCLUSIONS ── -->
+    <!-- ── 10 CONCLUSIONS ── -->
     <div class="section-heading">
-      <span class="sec-num">09</span>
+      <span class="sec-num">10</span>
       <h2 id="conclusions">Conclusions</h2>
     </div>
 
@@ -1056,9 +1114,9 @@
 
     <hr class="divider" />
 
-    <!-- ── 10 REFERENCES ── -->
+    <!-- ── 11 REFERENCES ── -->
     <div class="section-heading">
-      <span class="sec-num">10</span>
+      <span class="sec-num">11</span>
       <h2 id="references">References</h2>
     </div>
 
