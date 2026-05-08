@@ -1118,8 +1118,21 @@
     <p>The input is a single RGB image, resized to 32 x 32 pixels. Each of the images is represented as a tensor, with the shape [3, 32, 32]. It has 3 color channels and is 32 pixels tall and 32 pixels wide. This results in 3,072 input features per image.</p>
 
     <p>The output is a single scalar value between 0 and 1, as produced by the sigmoid activation. When values are above 0.5, they are classified as FAKE. When values are at or below 0.5, they are classified as REAL.</p>
-
-    <p>The architecture itself has three stages.</p>
+    <div class="io-strip">
+      <div class="io-box">
+        <div class="io-box-label">Input</div>
+        <div class="io-box-title">Single RGB Image</div>
+        <div class="io-box-detail">Tensor shape [3, 32, 32] &nbsp;·&nbsp; 3,072 features</div>
+      </div>
+    <div class="io-arrow">→</div>
+      <div class="io-box">
+        <div class="io-box-label">Output</div>
+        <div class="io-box-title">Scalar value 0 – 1</div>
+        <div class="io-box-detail">Above 0.5 → FAKE &nbsp;·&nbsp; At or below 0.5 → REAL</div>
+    </div>
+  </div>
+    
+    <p><strong>The architecture itself has three stages.</strong></p>
 
     <p>The first stage is feature extraction where three convolutional layers will progressively compress and abstract the image. The first block detects low level features such as edges and textures, making use of 32 filters. The second block detects the mid level patterns, utilizing 64 filters. The third block detects higher-order structural features, using 128 filters. Each of the blocks are followed by ReLU activation, which will help remove the unhelpful negative values, focusing on more meaningful signals from the photos, as well as max pooling, which will downsample the image.</p>
 
